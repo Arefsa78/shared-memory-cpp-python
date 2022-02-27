@@ -6,6 +6,7 @@
 #include <iostream>
 
 #define SHARE_MEM_SIZE 1000
+#define DATA_TYPE double
 
 int main() {
    using namespace boost::interprocess;
@@ -17,30 +18,30 @@ int main() {
     } remover;
 
     shared_memory_object shm (create_only, "MySharedMemory", read_write);
-    shm.truncate(sizeof(float)*SHARE_MEM_SIZE);
+    shm.truncate(sizeof(DATA_TYPE)*SHARE_MEM_SIZE);
     //Map the whole shared memory in this process
     mapped_region region(shm, read_write);
 
     //Write all the memory to 1
     std::memset(region.get_address(), 1, region.get_size());
 
-    float* start = (float*)(region.get_address());
-    float* end = start + SHARE_MEM_SIZE;    
+    DATA_TYPE* start = (DATA_TYPE*)(region.get_address());
+    DATA_TYPE* end = start + SHARE_MEM_SIZE;    
     int i = 1;
 
 
 
-    for (float* p = start; p < end; p++) { 
-        *p = (float)i + (float)i/10000;
+    for (DATA_TYPE* p = start; p < end; p++) { 
+        *p = (DATA_TYPE)i + (DATA_TYPE)i/10000;
         i++;
     }
 
-    for (float* p = start; p < end; p++) { 
+    for (DATA_TYPE* p = start; p < end; p++) { 
         std::cout << *p << std::endl;
     }
 
     std::cout << "Done! now waiting..." << std::endl;
-    std::cout << sizeof(float) << std::endl;
+    std::cout << sizeof(DATA_TYPE) << std::endl;
     while(1);
 
 }
